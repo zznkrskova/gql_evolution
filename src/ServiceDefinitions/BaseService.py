@@ -136,14 +136,18 @@ class BaseService(typing.Generic[T]):
             result = await coroutine
             return await cls.call_callback(OK, result)
 
+        
         except sqlalchemy.exc.SQLAlchemyError as e:
             logger.exception("Database service operation failed")
+            code = getattr(e, "code", None) or "unknown"
+
             return await cls.call_callback(
                 Error,
-                msg=f"Database error: {e} code({getattr(e, 'code', 'unknown')})",
+                msg="Database operation failed",
                 exception=e,
-                code=getattr(e, 'code', 'unknown'),
+                code=code,
             )
+
 
         except ServiceExceptionWithCode as e:
             return await cls.call_callback(

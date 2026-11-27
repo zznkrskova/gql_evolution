@@ -62,9 +62,8 @@ class DatabaseRuntime:
         self._settings = settings
 
         if settings.seed_data:
-            async with self.session() as session:
-                from src.DBDefinitions.seed import init_database_data
-                await init_database_data(session)
+            from src.DBDefinitions.seed import init_database_data
+            await init_database_data(self.session_maker)
 
         return self._session_maker
 
